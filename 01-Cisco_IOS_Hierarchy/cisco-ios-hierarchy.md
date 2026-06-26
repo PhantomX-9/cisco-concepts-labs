@@ -36,7 +36,7 @@ Common commands: `ping`, `traceroute`, `show version`, `show clock`, `connect`, 
 
 ## 2. Privileged EXEC Mode
 
-Also called "enable mode." Grants access to all monitoring, debugging, and file-system operations. Often password-protected.
+Also called "enable mode." Grants access to all monitoring, debugging, and file-system operations. 
 
 ```
 Router> enable
@@ -54,7 +54,7 @@ Common commands: `show running-config`, `show startup-config`, `copy`, `reload`,
 
 ## 3. Global Configuration Mode
 
-Where device-wide configuration changes are made. The gateway to all specific configuration submodes.
+This is where device-wide configuration changes are made and the gateway to all specific configuration submodes.
 
 ```
 Router# configure terminal
@@ -115,11 +115,14 @@ Defines VLANs on a switch: `name`, `state`.
 ```
 User EXEC (>)
    │  enable ↓ / disable ↑
+   |
 Privileged EXEC (#)
    │  configure terminal ↓ / exit ↑
+   |
 Global Config (config)
    │  interface / line / router / vlan ↓
    │  exit ↑ (one level)   end or Ctrl+Z (jump to Privileged EXEC)
+   |
 Specific Config Submode (config-if, config-line, config-router, ...)
 ```
 
