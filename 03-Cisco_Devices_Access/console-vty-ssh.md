@@ -1,4 +1,4 @@
-# Exploring Cisco Device Access: Console, VTY, SSH & Local Users
+# Cisco Device Access
 
 ![alt text](image.png)
 
