@@ -1,0 +1,990 @@
+annotations:
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#808080FF'
+    rotation: 0
+    text_bold: false
+    text_content: 192.168.1.1
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: 0.0
+    y1: 200.0
+    z_index: 0
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#808080FF'
+    rotation: 0
+    text_bold: false
+    text_content: 192.168.1.11
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: 240.0
+    y1: 80.0
+    z_index: 0
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#808080FF'
+    rotation: 0
+    text_bold: false
+    text_content: 192.168.1.10
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: 240.0
+    y1: -40.0
+    z_index: 0
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#808080FF'
+    rotation: 0
+    text_bold: false
+    text_content: 192.168.1.99
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -400.0
+    y1: -200.0
+    z_index: 0
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#808080FF'
+    rotation: 0
+    text_bold: false
+    text_content: 192.168.1.254
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -80.0
+    y1: -240.0
+    z_index: 0
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#808080FF'
+    rotation: 0
+    text_bold: false
+    text_content: |-
+      NX-OS:
+      luna / eclipse
+      orcale / flame
+      local: admin / cisco
+      local: nova / nebula
+
+      Ubuntu:
+      phantomx / cisco
+
+      Key:
+      sewer_mermaid
+
+      Joseph V.
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -280.0
+    y1: -80.0
+    z_index: 1
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#808080FF'
+    rotation: 0
+    text_bold: false
+    text_content: |-
+      IOS:
+      riven / valor
+      qiyana / elemental
+      local: diana / moonfall (priv 15)
+      local: pudge / hook (priv 1)
+      enable: lost_dream
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: 40.0
+    y1: -200.0
+    z_index: 2
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#FFFCFC'
+    rotation: 0
+    text_bold: false
+    text_content: 192.168.1.0/24
+    text_font: monospace
+    text_italic: false
+    text_size: 15
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -280.0
+    y1: -240.0
+    z_index: 3
+smart_annotations: []
+nodes:
+  - boot_disk_size: null
+    configuration:
+      - name: user-data
+        content: |-
+          #cloud-config
+          hostname: ubuntu
+          manage_etc_hosts: True
+          system_info:
+            default_user:
+              name: phantomx
+          password: cisco
+          chpasswd: { expire: False }
+          ssh_pwauth: True
+          ssh_authorized_keys:
+            - your-ssh-pubkey-line-goes-here
+      - name: network-config
+        content: |-
+          #network-config
+          network:
+            version: 2
+            ethernets:
+              ens2:
+                dhcp4: false
+                addresses:
+                  - 192.168.1.99/24
+                routes:
+                  - to: default
+                    via: 192.168.1.1
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n0
+    image_definition: null
+    label: ubuntu-0
+    node_definition: ubuntu
+    parameters: {}
+    priority: null
+    pyats:
+      username: null
+      password: null
+      enable_password: null
+    ram: null
+    tags: []
+    x: -360
+    y: -160
+    interfaces:
+      - id: i0
+        label: ens2
+        mac_address: null
+        type: physical
+        slot: 0
+  - boot_disk_size: null
+    configuration:
+      - name: tac_plus.conf
+        content: |-
+          key = sewer_mermaid
+          accounting file = /var/log/tacplus-acct.log
+
+          acl = default {
+              permit = 192.168.1.0/24
+          }
+
+          host = 192.168.1.0/24 {
+              prompt = "TACACS+ auth: "
+          }
+
+          group = netadmin {
+              default service = permit
+              service = exec {
+                  priv-lvl = 15
+                  idletime = 10
+                  timeout  = 60
+              }
+          }
+
+          group = netoper {
+              default service = deny    # default-deny for unlisted services/commands
+              service = exec {
+                  priv-lvl = 15
+                  idletime = 10
+                  timeout  = 30
+              }
+              cmd = show       { permit .* }
+              cmd = ping       { permit .* }
+              cmd = traceroute { permit .* }
+              cmd = exit       { permit .* }
+              cmd = configure  { deny   .* }
+          }
+
+          user = $enab15$ {
+              login = cleartext cisco
+          }
+
+          user = riven {
+              login = cleartext valor
+              member = netadmin
+          }
+
+          user = qiyana {
+              login = cleartext elemental
+              member = netoper
+          }
+
+          # NX-OS RBAC
+          user = luna {
+              login = cleartext eclipse
+              service = exec {
+                  shell:roles="\"network-admin vdc-admin\""
+              }
+          }
+
+          user = orcale {
+              login = cleartext flame
+              service = exec {
+                  shell:roles="\"network-operator vdc-operator\""
+              }
+          }
+      - name: boot.sh
+        content: |-
+          # insert more commands here
+          ip address add dev eth0 192.168.1.10/24
+          ip link set dev eth0 up
+          #
+          # keep the next line to indicate that the machine is ready
+          echo "READY" >/dev/console
+          exit 0
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n1
+    image_definition: null
+    label: tacplus-0
+    node_definition: tacplus
+    parameters: {}
+    priority: null
+    pyats:
+      username: null
+      password: null
+      enable_password: null
+    ram: null
+    tags: []
+    x: 200
+    y: -40
+    interfaces:
+      - id: i0
+        label: eth0
+        mac_address: null
+        type: physical
+        slot: 0
+      - id: i1
+        label: eth1
+        mac_address: null
+        type: physical
+        slot: 1
+      - id: i2
+        label: eth2
+        mac_address: null
+        type: physical
+        slot: 2
+      - id: i3
+        label: eth3
+        mac_address: null
+        type: physical
+        slot: 3
+  - boot_disk_size: null
+    configuration:
+      - name: tac_plus.conf
+        content: |-
+          key = sewer_mermaid
+          accounting file = /var/log/tacplus-acct.log
+
+          acl = default {
+              permit = 192.168.1.0/24
+          }
+
+          host = 192.168.1.0/24 {
+              prompt = "TACACS+ auth: "
+          }
+
+          group = netadmin {
+              default service = permit
+              service = exec {
+                  priv-lvl = 15
+                  idletime = 10
+                  timeout  = 60
+              }
+          }
+
+          group = netoper {
+              default service = deny    # default-deny for unlisted services/commands
+              service = exec {
+                  priv-lvl = 15
+                  idletime = 10
+                  timeout  = 30
+              }
+              cmd = show       { permit .* }
+              cmd = ping       { permit .* }
+              cmd = traceroute { permit .* }
+              cmd = exit       { permit .* }
+              cmd = configure  { deny   .* }
+          }
+
+          user = $enab15$ {
+              login = cleartext cisco
+          }
+
+          user = riven {
+              login = cleartext valor
+              member = netadmin
+          }
+
+          user = qiyana {
+              login = cleartext elemental
+              member = netoper
+          }
+
+          # NX-OS RBAC
+          user = luna {
+              login = cleartext eclipse
+              service = exec {
+                  shell:roles="\"network-admin vdc-admin\""
+              }
+          }
+
+          user = orcale {
+              login = cleartext flame
+              service = exec {
+                  shell:roles="\"network-operator vdc-operator\""
+              }
+          }
+      - name: boot.sh
+        content: |-
+          # insert more commands here
+          ip address add dev eth0 192.168.1.11/24
+          ip link set dev eth0 up
+          #
+          # keep the next line to indicate that the machine is ready
+          echo "READY" >/dev/console
+          exit 0
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n2
+    image_definition: null
+    label: tacplus-1
+    node_definition: tacplus
+    parameters: {}
+    priority: null
+    pyats:
+      username: null
+      password: null
+      enable_password: null
+    ram: null
+    tags: []
+    x: 200
+    y: 80
+    interfaces:
+      - id: i0
+        label: eth0
+        mac_address: null
+        type: physical
+        slot: 0
+      - id: i1
+        label: eth1
+        mac_address: null
+        type: physical
+        slot: 1
+      - id: i2
+        label: eth2
+        mac_address: null
+        type: physical
+        slot: 2
+      - id: i3
+        label: eth3
+        mac_address: null
+        type: physical
+        slot: 3
+  - boot_disk_size: null
+    configuration: []
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n3
+    image_definition: null
+    label: switch-0
+    node_definition: unmanaged_switch
+    parameters: {}
+    priority: null
+    pyats:
+      username: null
+      password: null
+      enable_password: null
+    ram: null
+    tags: []
+    x: -40
+    y: -40
+    interfaces:
+      - id: i0
+        label: port0
+        mac_address: null
+        type: physical
+        slot: 0
+      - id: i1
+        label: port1
+        mac_address: null
+        type: physical
+        slot: 1
+      - id: i2
+        label: port2
+        mac_address: null
+        type: physical
+        slot: 2
+      - id: i3
+        label: port3
+        mac_address: null
+        type: physical
+        slot: 3
+      - id: i4
+        label: port4
+        mac_address: null
+        type: physical
+        slot: 4
+      - id: i5
+        label: port5
+        mac_address: null
+        type: physical
+        slot: 5
+      - id: i6
+        label: port6
+        mac_address: null
+        type: physical
+        slot: 6
+      - id: i7
+        label: port7
+        mac_address: null
+        type: physical
+        slot: 7
+  - boot_disk_size: null
+    configuration:
+      - name: ios_config.txt
+        content: |-
+          Building configuration...
+
+
+          Current configuration : 4157 bytes
+          !
+          ! Last configuration change at 01:29:18 UTC Wed Jul 1 2026 by riven
+          !
+          version 15.9
+          service timestamps debug datetime msec
+          service timestamps log datetime msec
+          no service password-encryption
+          !
+          hostname spectre
+          !
+          boot-start-marker
+          boot-end-marker
+          !
+          !
+          no logging console
+          enable secret 9 $9$Q9qF6PxJGZJshf$ZhuyxvN/YAqMXg4ZcGkvbR8rhMYJ8B8Y5euStQKkJ/k
+          !
+          aaa new-model
+          !
+          !
+          aaa group server tacacs+ TAC_GROUP
+           server name TAC1
+           server name TAC2
+           ip tacacs source-interface GigabitEthernet0/0
+          !
+          aaa authentication login default group TAC_GROUP local
+          aaa authentication enable default group TAC_GROUP enable
+          aaa authorization exec default group TAC_GROUP local
+          aaa authorization commands 1 default group TAC_GROUP local
+          aaa authorization commands 15 default group TAC_GROUP local
+          aaa accounting exec default start-stop group TAC_GROUP
+          aaa accounting commands 1 default start-stop group TAC_GROUP
+          aaa accounting commands 15 default start-stop group TAC_GROUP
+          !
+          !
+          !
+          !
+          !
+          aaa session-id common
+          !
+          !
+          !
+          mmi polling-interval 60
+          no mmi auto-configure
+          no mmi pvc
+          mmi snmp-timeout 180
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          ip domain name phantomx.local
+          ip cef
+          no ipv6 cef
+          !
+          multilink bundle-name authenticated
+          !
+          !
+          !
+          !
+          username diana privilege 15 secret 9 $9$Ty5BCOEGRlpxhP$Hi4eUkiJ8kCsvS3FREHyqT.281YbnfejD7Af.1ZHawM
+          username pudge secret 9 $9$OvHtcHkwdtQomv$8StI7Qn3b1imIB3q1mCj4yJsjWGkXdF9sn24u1C4efE
+          !
+          redundancy
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          interface GigabitEthernet0/0
+           ip address 192.168.1.1 255.255.255.0
+           duplex auto
+           speed auto
+           media-type rj45
+          !
+          interface GigabitEthernet0/1
+           no ip address
+           shutdown
+           duplex auto
+           speed auto
+           media-type rj45
+          !
+          interface GigabitEthernet0/2
+           no ip address
+           shutdown
+           duplex auto
+           speed auto
+           media-type rj45
+          !
+          interface GigabitEthernet0/3
+           no ip address
+           shutdown
+           duplex auto
+           speed auto
+           media-type rj45
+          !
+          ip forward-protocol nd
+          !
+          !
+          no ip http server
+          no ip http secure-server
+          ip ssh time-out 60
+          ip ssh version 2
+          !
+          ipv6 ioam timestamp
+          !
+          !
+          tacacs server TAC1
+           address ipv4 192.168.1.10
+           key sewer_mermaid
+          tacacs server TAC2
+           address ipv4 192.168.1.11
+           key sewer_mermaid
+          !
+          !
+          !
+          control-plane
+          !
+          banner exec ^C
+          **************************************************************************
+          * IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+          * education. IOSv is provided as-is and is not supported by Cisco's      *
+          * Technical Advisory Center. Any use or disclosure, in whole or in part, *
+          * of the IOSv Software or Documentation to any third party for any       *
+          * purposes is expressly prohibited except as otherwise authorized by     *
+          * Cisco in writing.                                                      *
+          **************************************************************************^C
+          banner incoming ^C
+          **************************************************************************
+          * IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+          * education. IOSv is provided as-is and is not supported by Cisco's      *
+          * Technical Advisory Center. Any use or disclosure, in whole or in part, *
+          * of the IOSv Software or Documentation to any third party for any       *
+          * purposes is expressly prohibited except as otherwise authorized by     *
+          * Cisco in writing.                                                      *
+          **************************************************************************^C
+          banner login ^C
+          **************************************************************************
+          * IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+          * education. IOSv is provided as-is and is not supported by Cisco's      *
+          * Technical Advisory Center. Any use or disclosure, in whole or in part, *
+          * of the IOSv Software or Documentation to any third party for any       *
+          * purposes is expressly prohibited except as otherwise authorized by     *
+          * Cisco in writing.                                                      *
+          **************************************************************************^C
+          !
+          line con 0
+           exec-timeout 0 0
+           logging synchronous
+          line aux 0
+          line vty 0 4
+           exec-timeout 0 0
+           logging synchronous
+           transport input ssh
+          line vty 5 15
+           transport input none
+          !
+          no scheduler allocate
+          !
+          end
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n4
+    image_definition: null
+    label: iosv-0
+    node_definition: iosv
+    parameters: {}
+    priority: null
+    pyats:
+      username: null
+      password: null
+      enable_password: null
+    ram: null
+    tags: []
+    x: -40
+    y: 200
+    interfaces:
+      - id: i0
+        label: Loopback0
+        mac_address: null
+        type: loopback
+      - id: i1
+        label: GigabitEthernet0/0
+        mac_address: null
+        type: physical
+        slot: 0
+      - id: i2
+        label: GigabitEthernet0/1
+        mac_address: null
+        type: physical
+        slot: 1
+      - id: i3
+        label: GigabitEthernet0/2
+        mac_address: null
+        type: physical
+        slot: 2
+      - id: i4
+        label: GigabitEthernet0/3
+        mac_address: null
+        type: physical
+        slot: 3
+  - boot_disk_size: null
+    configuration:
+      - name: nxos_config.txt
+        content: |2-
+
+          !Command: show running-config
+          !Running configuration last done at: Wed Jul  1 01:49:41 2026
+          !Time: Wed Jul  1 01:49:41 2026
+
+          version 10.6(2) Bios:version
+          hostname templar
+          vdc templar id 1
+            limit-resource vlan minimum 16 maximum 4094
+            limit-resource vrf minimum 2 maximum 4096
+            limit-resource port-channel minimum 0 maximum 511
+            limit-resource m4route-mem minimum 58 maximum 58
+            limit-resource m6route-mem minimum 8 maximum 8
+
+          feature tacacs+
+
+          no password strength-check
+          username admin password 5 $5$NBHNDG$3U4vqPVuHkO5JoOb1BWyCkusCp1Y8quP/z8y46sQX05  role network-admin
+          username nova password 5 $5$KDCECA$fbavdcj3wqJzv3KJXyhdsuhN4GtsMD18lJI1i0JnKc5  role network-admin
+          username nova passphrase  lifetime 99999 warntime 14 gracetime 3
+          ssh key rsa 2048
+          ssh login-gracetime 60
+
+          ip domain-lookup
+          tacacs-server key 7 "vaajj_hjjpknt"
+          tacacs-server host 192.168.1.10
+          tacacs-server host 192.168.1.11
+          aaa group server tacacs+ TAC_GROUP
+              server 192.168.1.10
+              server 192.168.1.11
+              use-vrf management
+              source-interface mgmt0
+          snmp-server user nova network-admin auth md5 375246BB0453008EAAD2D72E38975EB1346F priv aes-128 017705A55858748D91C68F226B8964BB2244 localizedV2key
+          snmp-server user admin network-admin auth md5 483F732089FBF4955C356AD24964DF3C4ED7 priv aes-128 367B091CF2CFAB8E407C7E89057BAB2808AD localizedV2key
+          rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+          rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+          rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+          rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+          rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+          aaa authentication login default group TAC_GROUP local
+          aaa accounting default group TAC_GROUP
+          aaa authentication login error-enable
+          aaa authentication login ascii-authentication
+
+          vlan 1
+
+          vrf context management
+
+          interface Ethernet1/1
+
+          interface Ethernet1/2
+
+          interface Ethernet1/3
+
+          interface Ethernet1/4
+
+          interface Ethernet1/5
+
+          interface Ethernet1/6
+
+          interface Ethernet1/7
+
+          interface Ethernet1/8
+
+          interface Ethernet1/9
+
+          interface Ethernet1/10
+
+          interface Ethernet1/11
+
+          interface Ethernet1/12
+
+          interface Ethernet1/13
+
+          interface Ethernet1/14
+
+          interface Ethernet1/15
+
+          interface Ethernet1/16
+
+          interface Ethernet1/17
+
+          interface Ethernet1/18
+
+          interface Ethernet1/19
+
+          interface Ethernet1/20
+
+          interface Ethernet1/21
+
+          interface Ethernet1/22
+
+          interface Ethernet1/23
+
+          interface Ethernet1/24
+
+          interface Ethernet1/25
+
+          interface Ethernet1/26
+
+          interface Ethernet1/27
+
+          interface Ethernet1/28
+
+          interface Ethernet1/29
+
+          interface Ethernet1/30
+
+          interface Ethernet1/31
+
+          interface Ethernet1/32
+
+          interface Ethernet1/33
+
+          interface Ethernet1/34
+
+          interface Ethernet1/35
+
+          interface Ethernet1/36
+
+          interface Ethernet1/37
+
+          interface Ethernet1/38
+
+          interface Ethernet1/39
+
+          interface Ethernet1/40
+
+          interface Ethernet1/41
+
+          interface Ethernet1/42
+
+          interface Ethernet1/43
+
+          interface Ethernet1/44
+
+          interface Ethernet1/45
+
+          interface Ethernet1/46
+
+          interface Ethernet1/47
+
+          interface Ethernet1/48
+
+          interface Ethernet1/49
+
+          interface Ethernet1/50
+
+          interface Ethernet1/51
+
+          interface Ethernet1/52
+
+          interface Ethernet1/53
+
+          interface Ethernet1/54
+
+          interface Ethernet1/55
+
+          interface Ethernet1/56
+
+          interface Ethernet1/57
+
+          interface Ethernet1/58
+
+          interface Ethernet1/59
+
+          interface Ethernet1/60
+
+          interface Ethernet1/61
+
+          interface Ethernet1/62
+
+          interface Ethernet1/63
+
+          interface Ethernet1/64
+
+          interface mgmt0
+            vrf member management
+            ip address 192.168.1.254/24
+          icam monitor scale
+
+          line console
+            exec-timeout 0
+          line vty
+            exec-timeout 0
+          boot nxos bootflash:/nxos64-
+
+          no logging console
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n5
+    image_definition: null
+    label: nxos9000-0
+    node_definition: nxosv9000
+    parameters: {}
+    priority: null
+    pyats:
+      username: null
+      password: null
+      enable_password: null
+    ram: null
+    tags: []
+    x: -40
+    y: -200
+    interfaces:
+      - id: i0
+        label: Loopback0
+        mac_address: null
+        type: loopback
+      - id: i1
+        label: mgmt0
+        mac_address: null
+        type: physical
+        slot: 0
+      - id: i2
+        label: Ethernet1/1
+        mac_address: null
+        type: physical
+        slot: 1
+      - id: i3
+        label: Ethernet1/2
+        mac_address: null
+        type: physical
+        slot: 2
+      - id: i4
+        label: Ethernet1/3
+        mac_address: null
+        type: physical
+        slot: 3
+links:
+  - id: l0
+    n1: n3
+    n2: n2
+    i1: i3
+    i2: i0
+    conditioning: {}
+    label: switch-0-port3<->tacplus-1-eth0
+  - id: l1
+    n1: n0
+    n2: n3
+    i1: i0
+    i2: i4
+    conditioning: {}
+    label: ubuntu-0-ens2<->switch-0-port4
+  - id: l2
+    n1: n3
+    n2: n5
+    i1: i0
+    i2: i1
+    conditioning: {}
+    label: switch-0-port0<->nxos9000-0-mgmt0
+  - id: l3
+    n1: n4
+    n2: n3
+    i1: i1
+    i2: i1
+    conditioning: {}
+    label: iosv-0-GigabitEthernet0/0<->switch-0-port1
+  - id: l4
+    n1: n1
+    n2: n3
+    i1: i0
+    i2: i2
+    conditioning: {}
+    label: tacplus-0-eth0<->switch-0-port2
+lab:
+  description: ''
+  notes: ''
+  title: 'AAA with TACACS+ '
+  node_staging:
+    enabled: false
+    start_remaining: true
+    abort_on_failure: false
+  version: 0.3.1

@@ -158,6 +158,19 @@ line console 0
     logging synchronous
 ```
 
+### Verify / Debug Commands
+
+```
+test aaa group TAC_GROUP riven valor
+
+show tacacs
+show aaa servers
+show run | section aaa
+show run | section tacacs
+
+debug aaa authentication
+debug tacacs
+```
 ## NX-OS Configuration
 
 [Cisco Nexus AAA Configuration Guide](https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/106x/configuration/security/cisco-nexus-9000-series-nx-os-security-configuration-guide-release-106x/m-configuring-aaa.html)
@@ -168,7 +181,6 @@ line console 0
 
 ```
 ssh key rsa 2048 force
-feature ssh
 ssh login-attempts 3
 ssh login-gracetime 60
 
@@ -176,9 +188,8 @@ interface mgmt 0
     ip address 192.168.1.254/24
     vrf member management
 ```
-> SSH should be enable by default on NX-OS, if not use `feature ssh`
 
-> The default 1024-bit RSA is considered weak by modern standards, overwrite the existing 1024-bit key with a new 2048-bit one
+> The default 1024-bit RSA is considered weak by modern standards, overwrite the existing 1024-bit key with a new 2048-bit.
 
 Verify reachability to the AAA servers:
 
@@ -187,7 +198,7 @@ ping 192.168.1.10 vrf management
 
 ```
 
-If you run into reachability problem with tacplus+ after wiping the node, consider checking the ARP table. (took me nearly 2 hours of debugging 😭)
+If you run into reachability problem with tacplus+ after wiping the node, consider checking the ARP table. (took me nearly an hour of debugging 😭)
 
 ```
 show ip arp vrf management 
@@ -216,11 +227,9 @@ aaa group server tacacs+ TAC_GROUP
     deadtime 5
 ```
 
-> `deadtime` controls how long NX-OS will skip a TACACS+ server after it's been marked unresponsive/dead, before trying it again
+> `deadtime` controls how long NX-OS will skip a TACACS+ server after it's been marked unresponsive/dead, before trying it again.
 
 ### Step 3: Authentication
-
-NX-OS-specific things here, login console is a separate, explicit method list — NX-OS doesn't silently fold console into default the way IOS does, so if you want the console line to use TACACS+ too, you state it.
 
 ```
 aaa authentication login default group TAC_GROUP local
@@ -233,12 +242,8 @@ aaa authentication login ascii-authentication
 
 
 ### Authorization
-NX-OS authorization doesn't have privilege-level buckets like IOS's commands 1 / commands 15. Instead, config-commands and commands apply to all configuration and exec commands respectively, and the actual permit/deny logic comes from RBAC roles the server hands back.
 
-```
-aaa authorization config-commands default group TAC_GROUP local
-aaa authorization commands default group TAC_GROUP local
-```
+> NX-OS automatically performs exec authorization as part of the authentication login process, so a separate aaa authorization exec default command is not required.
 
 ### Step 5: Accounting
 
@@ -248,35 +253,23 @@ aaa accounting default group TAC_GROUP
 
 > NX-OS accounting is a single line covering both exec and command accounting
 
-### Verify (IOS)
-
-For debugging when something doesn't work, `debug tacacs` and `debug aaa authentication` on the router plus watching the daemon's log side by side will show you exactly where it breaks
+### Verify / Debug commands (NX-OX)
 
 ```
-test aaa group TAC_GROUP diana moonfall legacy
-show tacacs
-show aaa servers
-debug tacacs 
+test aaa group TAC_GROUP luna eclipse
+
+show tacacs-server
+show tacacs-server groups
+show running-config aaa
+show running-config tacacs+
+show user-account
+
 debug aaa authentication
 ```
 
-### NX
+### Ubuntu
 
-```
-show running=config aaa
-show running-config tacacs+
-show tacacs-server
-show tacacs-server groups
-show aaa groups
-
-show tacacs-server status
-ping 192.168.1.x vrf management
-
-show user-account
-show users
-```
-
-in your ubuntu you need:
+Modern OpenSSH (on your Ubuntu client) dropped SHA-1-based key exchange methods by default years ago due to SHA-1 being cryptographically weak. So you will need this in `.ssh/config`:
 
 ```
 Host 192.168.1.1
@@ -284,19 +277,5 @@ Host 192.168.1.1
     HostKeyAlgorithms +ssh-rsa
     PubkeyAcceptedAlgorithms +ssh-rsa
 ```
-
-For testing, shut down one link and see if another TAC server take over. 
-
-Now shut down both and see if your local fall back work, wait for the time out, this will take a number of seconds, this is normal!
-
-When tacacs+ server are up local account should not work. Local will only take over, if the TAC_GROUP doesn't respond. local is only consulted if the group itself failed to respond (timeout/unreachable)
-
-> aaa authentication login default group TAC_GROUP local
-
-
-Host 192.168.1.1
-    KexAlgorithms +diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1
-    HostKeyAlgorithms +ssh-rsa
-    PubkeyAcceptedAlgorithms +ssh-rsa
 
 
